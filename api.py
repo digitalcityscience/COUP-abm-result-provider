@@ -1,6 +1,5 @@
 
-from curses.ascii import HT
-import json
+import os
 import math
 import requests
 import numpy as np
@@ -16,12 +15,13 @@ from abm_result_to_gdf import convert_abm_result_to_gdf
 
 import geo_to_raster
 
+from dotenv import load_dotenv
 
 app = FastAPI()
+load_dotenv()
+citypyo_url = os.getenv("CITYPYO_URL")
 
-# TODO get urls from env
-citypyo_url = 'https://api.city-scope.hcu-hamburg.de/citypyo/'
-to_png_service_url = "http://0.0.0.0:80/geojson_to_png"
+
 
 
 class ScenarioProperties(TypedDict):
@@ -48,7 +48,6 @@ class PngResponse(TypedDict):
 
 # returns the project area as gdf
 def get_project_area_from_citypyo(userid)-> geopandas.GeoDataFrame:
-    
     response = requests.get(
         citypyo_url + "getLayer", 
         json= {
@@ -101,32 +100,6 @@ def get_result_from_citypyo(
 
     return response["simulationResult"]
 
-
-# calls api to convert result to png
-def gdf_to_raster(
-    gdf: geopandas.GeoDataFrame,
-    property_to_burn: str,
-    resolution: int
-) -> PngResponse:
-
-    geojson = json.loads(gdf.to_json())
-    
-    # gdf.to_json() doesnt export crs
-    geojson["crs"] = {
-        "type": "name",
-        "properties": {
-            "name": "EPSG:4326"
-        }
-    }
-
-    payload = {
-        "geojson": geojson,
-        "resolution": resolution,
-        "property_to_burn": property_to_burn
-    }
-    r = requests.post(to_png_service_url, json=payload)
-
-    return r.json()
 
 
 async def rasterize(project_area, gdf, resolution, hour):
@@ -189,7 +162,7 @@ async def normalize_result(hourly_result: np.ndarray, resolution: int):
 
 
 
-@app.get("/abm_result_as_pngs")
+@app.post("/abm_result_as_pngs")
 async def abm_result_as_pngs(
     userid: str,
     scenario_properties: ScenarioProperties,
@@ -241,6 +214,3 @@ async def abm_result_as_pngs(
             "img_height": img_height
         }
     }
-
-
-

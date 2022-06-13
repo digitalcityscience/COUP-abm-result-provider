@@ -1,9 +1,12 @@
-matplotlib
+fastapi==0.75.2
+uvicorn[standard]
+requests
 geopandas
 pyproj
 rasterio
 shapely
-icecream
 numpy
 rioxarray
 pygeos
+geocube
+pillow

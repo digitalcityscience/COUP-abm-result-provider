@@ -1,6 +1,4 @@
 import base64
-from heapq import merge
-import os
 
 # vector data
 import geopandas
