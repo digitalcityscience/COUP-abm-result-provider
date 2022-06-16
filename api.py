@@ -17,7 +17,7 @@ import geo_to_raster
 
 from dotenv import load_dotenv
 
-app = FastAPI(root_path="/abm")
+app = FastAPI()
 
 load_dotenv()
 citypyo_url = os.getenv("CITYPYO_URL")
