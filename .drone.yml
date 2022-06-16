@@ -46,8 +46,8 @@ steps:
   settings:
     stamp: ${DRONE_COMMIT}
     kubectl_options: '--insecure-skip-tls-verify'
-    kubernetes_deployment: 'abm-api'
-    kubernetes_namespace: ${DRONE_BRANCH}
+    kubernetes_deployment: 'abm-result-provider'
+    kubernetes_namespace: 'master'
     rancher_url:
       from_secret: rancher_url
     rancher_token:
