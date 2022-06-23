@@ -209,8 +209,8 @@ async def abm_result_as_pngs(
     return {
         "results": response_obj,
         "coordinates": {
-            "bbox_sw_corner": sw_corner,
-            "bbox_coordinates": geo_bounds,
+            "bbox_sw_corner": sw_corner[0],
+            "bbox_coordinates": geo_bounds[0],
             "img_width": img_width,
             "img_height": img_height
         }
