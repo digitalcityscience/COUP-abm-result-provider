@@ -126,6 +126,9 @@ async def rasterize(project_area, gdf, resolution, hour):
         project_area.crs
     )
 
+    # mirror along x-axis (wind and noise provide results like that and it works for unity..)
+    raster = np.flipud(raster)
+
     return raster
 
 
