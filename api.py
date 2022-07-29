@@ -1,12 +1,12 @@
 
 import os
 import math
+import json
 import requests
 import numpy as np
 import geopandas
 from shapely.geometry import Point
 from PIL import Image
-
 
 from fastapi import FastAPI, HTTPException
 from typing import TypedDict, Literal
@@ -45,6 +45,19 @@ class PngResponse(TypedDict):
     bbox_coordinates: list
     image_base64_string: str
 
+
+
+def get_poi_geojson(scen_props: ScenarioProperties):
+    filename = scen_props["main_street_orientation"] + "_" + scen_props["roof_amenities"]
+    filename = filename + ".geojson"
+
+    cwd = os.getcwd()
+
+    with open(cwd + "/points_of_interest/" + filename) as fp:
+        geojson = json.load(fp)
+        fp.close()
+
+    return geojson
 
 
 # returns the project area as gdf
@@ -178,7 +191,7 @@ async def abm_result_as_pngs(
     Splits result set into subsets for each hour of the simulated time
     Returns array of png (base64)
     """
-
+    
     project_area = get_project_area_from_citypyo(userid)
     abm_result = get_result_from_citypyo(userid, scenario_properties)
     gdf = convert_abm_result_to_gdf(abm_result)
@@ -210,6 +223,7 @@ async def abm_result_as_pngs(
 
 
     return {
+        "points_of_interest": get_poi_geojson(scenario_properties),
         "results": response_obj,
         "coordinates": {
             "bbox_sw_corner": sw_corner[0],
