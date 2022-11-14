@@ -14,7 +14,9 @@ def convert_abm_result_to_gdf(abm_result) -> geopandas.GeoDataFrame:
         "lat": [], "lon": [], "timestamp": []
     }
 
-    for agent_data in abm_result:
+    # for agent_data in abm_result:
+    for agent_name in abm_result.keys():
+        agent_data = abm_result[agent_name]
         for path_id, coords in enumerate(agent_data["path"]):
             data["lon"].append(float(coords[0]))
             data["lat"].append(float(coords[1]))
